@@ -2,11 +2,11 @@
 
 # Build the sendgrid MCP server
 build:
-	go build -o sendgrid-server .
+	go build -o bin/sendgrid-server .
 
 # Clean build artifacts
 clean:
-	rm -f sendgrid-server
+	rm -f bin
 
 # Run go tests
 test:
@@ -15,17 +15,17 @@ test:
 # Test server initialization (no API key required)
 test-init: build
 	@echo "Testing server initialization..."
-	@echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "test", "version": "1.0.0"}}}' | timeout 5s ./sendgrid-server
+	@echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "test", "version": "1.0.0"}}}' | timeout 5s ./bin/sendgrid-server
 
 # Test tool listing (no API key required)
 test-list: build
 	@echo "Testing tool listing..."
-	@echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' | timeout 5s ./sendgrid-server
+	@echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' | timeout 5s ./bin/sendgrid-server
 
 # Test tool call without API key (should return error)
 test-call-no-key: build
 	@echo "Testing email sending without API key (should fail gracefully)..."
-	@echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "sendEmail", "arguments": {"from": "test@example.com", "to": "recipient@example.com", "subject": "Test", "textBody": "Hello!"}}}' | timeout 5s ./sendgrid-server
+	@echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "sendEmail", "arguments": {"from": "test@example.com", "to": "recipient@example.com", "subject": "Test", "textBody": "Hello!"}}}' | timeout 5s ./bin/sendgrid-server
 
 # Test tool call with API key (requires SENDGRID_API_KEY, FROM_EMAIL, TO_EMAIL environment variables)
 test-call: build
@@ -35,11 +35,11 @@ test-call: build
 		exit 1; \
 	fi
 	@echo "Testing email sending with API key..."
-	@SENDGRID_API_KEY=$(SENDGRID_API_KEY) echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "sendEmail", "arguments": {"from": "$(FROM_EMAIL)", "to": "$(TO_EMAIL)", "subject": "MCP Test Email", "textBody": "This is a test email sent via the SendGrid MCP server."}}}' | timeout 10s ./sendgrid-server
+	@SENDGRID_API_KEY=$(SENDGRID_API_KEY) echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "sendEmail", "arguments": {"from": "$(FROM_EMAIL)", "to": "$(TO_EMAIL)", "subject": "MCP Test Email", "textBody": "This is a test email sent via the SendGrid MCP server."}}}' | timeout 10s ./bin/sendgrid-server
 
 # Install the server to a system location
 install: build
-	sudo cp sendgrid-server /usr/local/bin/
+	sudo cp bin/sendgrid-server /usr/local/bin/
 
 # Show help
 help:
