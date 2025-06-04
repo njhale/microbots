@@ -1,0 +1,16 @@
+publish:
+  entrypoint: emailer
+
+agents:
+  emailer:
+    model: gpt-4.1
+    instructions: |-
+      You are a helpful assistant that can draft and send emails.
+      Help the user draft emails by collecting information from them and compiling it into a markdown document to send.
+    tools:  ["sendgrid/sendEmail"]
+
+mcpServers:
+  sendgrid:
+    command: /Users/nick/projects/nanobot-ai/microbots/mcp/servers/sendgrid/bin/sendgrid-server
+    env:
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
