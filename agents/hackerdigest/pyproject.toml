@@ -1,0 +1,12 @@
+[project]
+name = "nanobot-hackerdigest"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=2.6.1",
+    "markitdown>=0.1.2",
+    "requests>=2.32.3",
+    "beautifulsoup4>=4.12.0",
+]

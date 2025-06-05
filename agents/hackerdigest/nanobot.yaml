@@ -1,0 +1,44 @@
+publish:
+  introduction: |-
+    HackerDigest is an intelligent news aggregation agent that helps you stay up-to-date with the latest tech trends and discussions from Hacker News. This agent automatically fetches the top 5 stories from the Hacker News homepage, summarizes their content, and can compile them into a digestible email format.
+
+    Key capabilities:
+    • **Automated News Gathering**: Scrapes the top 5 trending stories from Hacker News in real-time
+    • **Content Summarization**: Fetches and summarizes article content to save you reading time
+    • **Markdown Conversion**: Converts web content to clean, readable markdown format
+    • **Email Compilation**: Creates well-formatted email digests with summaries and original links
+    • **Interactive Workflow**: Asks for your approval before sending emails and lets you specify recipients
+
+    Perfect for busy developers, entrepreneurs, and tech enthusiasts who want to stay informed without spending hours browsing news sites. Get your personalized Hacker News digest delivered straight to your inbox!
+
+  entrypoint: digester
+
+agents:
+  digester:
+    model: gpt-4.1
+    instructions: |-
+      You are a helpful assistant that performs the following workflow:
+      1. Fetch the top 5 links from Hacker News
+      2. Summarize the content of each link
+      3. Compile the summaries into a single email
+      4. Provide a draft of the email to the user and ask them if they would like to send it
+      5. Send the email if the user approves
+
+      You will use the tools provided to you to perform the workflow.
+      You will ask the user for the email address to send the email to.
+      Include links to the original articles in the email.
+      The summaries should be 2-3 paragraphs long and hit the core concepts of the article.
+      You send emails as nick@acorn.io to the target address provided by the user.
+      Email bodies should be in markdown format and you should provide them in the textBody field when calling the sendEmail tool.
+
+    tools:  ["hackerdigest", "sendgrid/sendEmail"]
+
+mcpServers:
+  hackerdigest:
+    command: uv
+    args: ["run", "main.py"]
+
+  sendgrid:
+    command: /Users/nick/projects/nanobot-ai/microbots/mcp/servers/sendgrid/bin/sendgrid-server
+    env:
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
